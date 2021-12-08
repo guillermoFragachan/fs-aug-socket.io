@@ -60,9 +60,10 @@ io.on("connection", (socket) => {
 
 
     socket.on("privateChat", ({ message, room }) => {
-        console.log(socket)
+        
 
         socket.join(room)
+        console.log(socket.rooms)
         socket.to(room).emit("dm", message) // this is sending to all users in the room except the sender
     })
 
