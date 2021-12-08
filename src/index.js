@@ -59,30 +59,34 @@ io.on("connection", (socket) => {
     })
 
 
-    socket.on("privateChat", ({ message, room }) => {
+    // socket.on("privateChat", ({ message, room }) => {
         
 
-        socket.join(room)
-        console.log(socket.rooms)
-        socket.to(room).emit("dm", message) // this is sending to all users in the room except the sender
+    //     socket.join(room)
+    //     console.log(socket.id)
+    //     socket.to(room).emit("dm", message) // this is sending to all users in the room except the sender
+    // })
+
+    socket.on("privateChat", ({ message, room }) => {
+        let privateChat = []
+        privateChat.push(socket.id)
+        console.log(privateChat)
+
+        if(privateChat.length > 1){
+            socket.emit("dm", "room full")
+
+        }else{
+            socket.join(room)
+        console.log(socket.id)
+        socket.to(room).emit("dm", message)
+
+        }
+
+         // this is sending to all users in the room except the sender
     })
 
-    // socket.on("setChat",({message, chat}) =>{
-    //     let privateChat = []
-    //     console.log(privateChat)
-    //     if(privateChat.length > 1){
-    //         socket.join(chat)
-    //         privateChat.push(socket.id)
-    //         socket.emit("privateChat", message)
-            
-    //     }else{
-    //         console.log("room full")
-    //     }
-        
-    //     socket.emit("chat",{message})
 
-
-    // } )
+    
     // When we disconnect we remove the user from the online users list
     socket.on("disconnect", () => {
         console.log(`${socket.id} disconnected`)
