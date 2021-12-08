@@ -21,15 +21,22 @@ const io = new Server(httpServer, { /* options */ });
 
 // We are defining all of our event handlers
 io.on("connection", (socket) => {
-    console.log(socket.id)
+    // console.log(socket.id)
+    // socket.emit("messege",{mes:"newUser"})
+   
 
     // We are setting the username for the user
     // This doubles as a "login" event since we dont have an auth system
     socket.on("setUsername", ({ username, room }) => {
+        console.log("newUser", username, room)
+
+       
+
         onlineUsers.push({ username: username, socketId: socket.id, room: room })
 
         socket.join(room)
         console.log(socket.rooms)
+        
 
         socket.emit("loggedin")
         socket.to(room).emit("newConnection")
@@ -37,7 +44,9 @@ io.on("connection", (socket) => {
 
     // When we get a message from the frontend we broadcast it to all users in the room
     socket.on("sendmessage", ({ message, room }) => {
-        //socket.broadcast.emit("message", message) // this is sending to all users except the sender
+        console.log(message)
+        socket.emit("s", "works")
+        // socket.broadcast.emit("message", message) // this is sending to all users except the sender
         socket.to(room).emit("message", message) // this is sending to all users in the room except the sender
     })
 
