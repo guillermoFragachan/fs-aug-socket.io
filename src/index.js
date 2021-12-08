@@ -13,6 +13,14 @@ app.get("/online-users", (req, res) => {
     res.send({ onlineUsers })
 })
 
+let privateChat = []
+
+// app.get("/chat/:id",(req, res) => {
+// if(privateChat.length > 1){
+//     res
+// }
+// })
+
 // We are creating an instance of a standard HTTP server based on our express config
 const httpServer = createServer(app);
 
@@ -44,12 +52,36 @@ io.on("connection", (socket) => {
 
     // When we get a message from the frontend we broadcast it to all users in the room
     socket.on("sendmessage", ({ message, room }) => {
-        console.log(message)
+        console.log(socket)
         socket.emit("s", "works")
         // socket.broadcast.emit("message", message) // this is sending to all users except the sender
         socket.to(room).emit("message", message) // this is sending to all users in the room except the sender
     })
 
+
+    socket.on("privateChat", ({ message, room }) => {
+        console.log(socket)
+
+        socket.join(room)
+        socket.to(room).emit("dm", message) // this is sending to all users in the room except the sender
+    })
+
+    // socket.on("setChat",({message, chat}) =>{
+    //     let privateChat = []
+    //     console.log(privateChat)
+    //     if(privateChat.length > 1){
+    //         socket.join(chat)
+    //         privateChat.push(socket.id)
+    //         socket.emit("privateChat", message)
+            
+    //     }else{
+    //         console.log("room full")
+    //     }
+        
+    //     socket.emit("chat",{message})
+
+
+    // } )
     // When we disconnect we remove the user from the online users list
     socket.on("disconnect", () => {
         console.log(`${socket.id} disconnected`)
